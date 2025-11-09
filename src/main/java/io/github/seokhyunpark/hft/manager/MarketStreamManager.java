@@ -1,0 +1,19 @@
+package io.github.seokhyunpark.hft.manager;
+
+import com.binance.connector.client.common.websocket.service.StreamBlockingQueueWrapper;
+import com.binance.connector.client.spot.websocket.stream.model.PartialBookDepthResponse;
+
+public class MarketStreamManager {
+
+    public void startProcessing(StreamBlockingQueueWrapper<PartialBookDepthResponse> queue) {
+        System.out.println("[ManagerStream] 데이터 처리 시작. 큐 대기 중...");
+        try {
+            while (true) {
+                PartialBookDepthResponse response = queue.take();
+                System.out.println("[MarketStream] " + response.toJson());
+            }
+        } catch (InterruptedException e) {
+            System.out.println("[InterruptedException] " + e);
+        }
+    }
+}
