@@ -5,9 +5,9 @@ import com.binance.connector.client.common.websocket.configuration.WebSocketClie
 import com.binance.connector.client.common.websocket.service.StreamBlockingQueueWrapper;
 import com.binance.connector.client.spot.websocket.stream.SpotWebSocketStreamsUtil;
 import com.binance.connector.client.spot.websocket.stream.api.SpotWebSocketStreams;
-import com.binance.connector.client.spot.websocket.stream.model.Levels;
 import com.binance.connector.client.spot.websocket.stream.model.PartialBookDepthRequest;
 import com.binance.connector.client.spot.websocket.stream.model.PartialBookDepthResponse;
+import io.github.seokhyunpark.hft.config.ApplicationConfig;
 
 public class MarketStreamConnector {
     private SpotWebSocketStreams api;
@@ -22,9 +22,9 @@ public class MarketStreamConnector {
 
     public StreamBlockingQueueWrapper<PartialBookDepthResponse> connect() throws ApiException {
         PartialBookDepthRequest request = new PartialBookDepthRequest();
-        request.symbol("btcfdusd");
-        request.levels(Levels.LEVELS_20);
-        request.updateSpeed("100ms");
+        request.symbol(ApplicationConfig.SYMBOL);
+        request.levels(ApplicationConfig.LEVEL);
+        request.updateSpeed(ApplicationConfig.SPEED);
 
         return getApi().partialBookDepth(request);
     }
