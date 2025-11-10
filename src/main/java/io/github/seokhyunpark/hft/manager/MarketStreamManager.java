@@ -13,7 +13,7 @@ public class MarketStreamManager {
                 System.out.println("[MarketStream] " + response.toJson());
             }
         } catch (InterruptedException e) {
-            System.out.println("[InterruptedException] " + e);
+            System.err.println("[InterruptedException] " + e);
         }
     }
 }
