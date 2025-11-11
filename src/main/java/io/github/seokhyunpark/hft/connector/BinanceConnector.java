@@ -50,4 +50,26 @@ public class BinanceConnector {
         ApiResponse<NewOrderResponse> response = api.newOrder(request);
         return response.getData();
     }
+
+    public NewOrderResponse buyMarket(String symbol, BigDecimal quoteOrderQty) throws ApiException {
+        NewOrderRequest request = new NewOrderRequest();
+        request.symbol(symbol);
+        request.side(Side.BUY);
+        request.type(OrderType.MARKET);
+        request.quoteOrderQty(quoteOrderQty.doubleValue());
+
+        ApiResponse<NewOrderResponse> response = api.newOrder(request);
+        return response.getData();
+    }
+
+    public NewOrderResponse sellMarket(String symbol, BigDecimal quoteOrderQty) throws ApiException {
+        NewOrderRequest request = new NewOrderRequest();
+        request.symbol(symbol);
+        request.side(Side.SELL);
+        request.type(OrderType.MARKET);
+        request.quantity(quoteOrderQty.doubleValue());
+
+        ApiResponse<NewOrderResponse> response = api.newOrder(request);
+        return response.getData();
+    }
 }
