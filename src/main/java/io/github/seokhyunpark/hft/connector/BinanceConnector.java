@@ -10,6 +10,7 @@ import com.binance.connector.client.spot.rest.SpotRestApiUtil;
 import com.binance.connector.client.spot.rest.api.SpotRestApi;
 import com.binance.connector.client.spot.rest.model.CancelRestrictions;
 import com.binance.connector.client.spot.rest.model.DeleteOrderResponse;
+import com.binance.connector.client.spot.rest.model.GetAccountResponse;
 import com.binance.connector.client.spot.rest.model.NewOrderRequest;
 import com.binance.connector.client.spot.rest.model.NewOrderResponse;
 import com.binance.connector.client.spot.rest.model.OrderType;
@@ -89,6 +90,14 @@ public class BinanceConnector {
                 cancelRestrictions,
                 recvWindow
         );
+        return response.getData();
+    }
+
+    public GetAccountResponse getAccount() throws ApiException {
+        Boolean omitZeroBalances = true;
+        Long recvWindow = null;
+
+        ApiResponse<GetAccountResponse> response = api.getAccount(omitZeroBalances, recvWindow);
         return response.getData();
     }
 }
