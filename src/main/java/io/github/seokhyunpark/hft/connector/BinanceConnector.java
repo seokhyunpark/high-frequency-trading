@@ -1,10 +1,17 @@
 package io.github.seokhyunpark.hft.connector;
 
+import java.math.BigDecimal;
+
 import com.binance.connector.client.common.ApiException;
+import com.binance.connector.client.common.ApiResponse;
 import com.binance.connector.client.common.configuration.ClientConfiguration;
 import com.binance.connector.client.common.configuration.SignatureConfiguration;
 import com.binance.connector.client.spot.rest.SpotRestApiUtil;
 import com.binance.connector.client.spot.rest.api.SpotRestApi;
+import com.binance.connector.client.spot.rest.model.NewOrderRequest;
+import com.binance.connector.client.spot.rest.model.NewOrderResponse;
+import com.binance.connector.client.spot.rest.model.OrderType;
+import com.binance.connector.client.spot.rest.model.Side;
 
 import io.github.seokhyunpark.hft.config.ApplicationConstants;
 
@@ -18,5 +25,29 @@ public class BinanceConnector {
         signatureConfiguration.setPrivateKey(ApplicationConstants.PRIVATE_KEY_PATH);
         clientConfiguration.setSignatureConfiguration(signatureConfiguration);
         this.api = new SpotRestApi(clientConfiguration);
+    }
+
+    public NewOrderResponse buyLimitMaker(String symbol, BigDecimal quantity, BigDecimal price) throws ApiException{
+        NewOrderRequest request = new NewOrderRequest();
+        request.symbol(symbol);
+        request.side(Side.BUY);
+        request.type(OrderType.LIMIT_MAKER);
+        request.quantity(quantity.doubleValue());
+        request.price(price.doubleValue());
+
+        ApiResponse<NewOrderResponse> response = api.newOrder(request);
+        return response.getData();
+    }
+
+    public NewOrderResponse sellLimitMaker(String symbol, BigDecimal quantity, BigDecimal price) throws ApiException {
+        NewOrderRequest request = new NewOrderRequest();
+        request.symbol(symbol);
+        request.side(Side.SELL);
+        request.type(OrderType.LIMIT_MAKER);
+        request.quantity(quantity.doubleValue());
+        request.price(price.doubleValue());
+
+        ApiResponse<NewOrderResponse> response = api.newOrder(request);
+        return response.getData();
     }
 }
