@@ -8,6 +8,8 @@ import com.binance.connector.client.common.configuration.ClientConfiguration;
 import com.binance.connector.client.common.configuration.SignatureConfiguration;
 import com.binance.connector.client.spot.rest.SpotRestApiUtil;
 import com.binance.connector.client.spot.rest.api.SpotRestApi;
+import com.binance.connector.client.spot.rest.model.CancelRestrictions;
+import com.binance.connector.client.spot.rest.model.DeleteOrderResponse;
 import com.binance.connector.client.spot.rest.model.NewOrderRequest;
 import com.binance.connector.client.spot.rest.model.NewOrderResponse;
 import com.binance.connector.client.spot.rest.model.OrderType;
@@ -70,6 +72,23 @@ public class BinanceConnector {
         request.quantity(quoteOrderQty.doubleValue());
 
         ApiResponse<NewOrderResponse> response = api.newOrder(request);
+        return response.getData();
+    }
+
+    public DeleteOrderResponse cancelOrder(String symbol, Long orderId) throws ApiException {
+        String origClientOrderId = null;
+        String newClientOrderId = null;
+        CancelRestrictions cancelRestrictions = null;
+        Long recvWindow = null;
+
+        ApiResponse<DeleteOrderResponse> response = api.deleteOrder(
+                symbol,
+                orderId,
+                origClientOrderId,
+                newClientOrderId,
+                cancelRestrictions,
+                recvWindow
+        );
         return response.getData();
     }
 }
