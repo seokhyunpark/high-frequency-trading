@@ -27,7 +27,7 @@ public class BinanceConnector {
         this.api = new SpotRestApi(clientConfiguration);
     }
 
-    public NewOrderResponse buyLimitMaker(String symbol, BigDecimal quantity, BigDecimal price) throws ApiException{
+    public NewOrderResponse buyLimitMaker(String symbol, BigDecimal quantity, BigDecimal price) throws ApiException {
         NewOrderRequest request = new NewOrderRequest();
         request.symbol(symbol);
         request.side(Side.BUY);
