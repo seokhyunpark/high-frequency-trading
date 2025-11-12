@@ -1,6 +1,8 @@
 package io.github.seokhyunpark.hft.connector;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
 import com.binance.connector.client.common.ApiException;
 import com.binance.connector.client.common.ApiResponse;
@@ -11,6 +13,7 @@ import com.binance.connector.client.spot.rest.api.SpotRestApi;
 import com.binance.connector.client.spot.rest.model.CancelRestrictions;
 import com.binance.connector.client.spot.rest.model.DeleteOrderResponse;
 import com.binance.connector.client.spot.rest.model.GetAccountResponse;
+import com.binance.connector.client.spot.rest.model.GetAccountResponseBalancesInner;
 import com.binance.connector.client.spot.rest.model.NewOrderRequest;
 import com.binance.connector.client.spot.rest.model.NewOrderResponse;
 import com.binance.connector.client.spot.rest.model.OrderType;
@@ -99,5 +102,28 @@ public class BinanceConnector {
 
         ApiResponse<GetAccountResponse> response = api.getAccount(omitZeroBalances, recvWindow);
         return response.getData();
+    }
+
+    public BigDecimal getFreeBalance(String symbol) {
+        GetAccountResponse account = getAccount();
+        if (account == null) {
+            return BigDecimal.ZERO;
+        }
+
+        List<GetAccountResponseBalancesInner> balances = account.getBalances();
+        if (balances == null) {
+            return BigDecimal.ZERO;
+        }
+
+        for (GetAccountResponseBalancesInner balance : balances) {
+            if (Objects.equals(balance.getAsset(), symbol)) {
+                String freeBalance = balance.getFree();
+                if (freeBalance == null) {
+                    return BigDecimal.ZERO;
+                }
+                return new BigDecimal(freeBalance);
+            }
+        }
+        return BigDecimal.ZERO;
     }
 }
