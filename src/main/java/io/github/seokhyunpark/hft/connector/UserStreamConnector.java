@@ -10,6 +10,7 @@ import com.binance.connector.client.common.websocket.service.StreamBlockingQueue
 import com.binance.connector.client.spot.websocket.api.model.UserDataStreamEventsResponse;
 import com.binance.connector.client.spot.websocket.api.model.UserDataStreamSubscribeResponse;
 import io.github.seokhyunpark.hft.config.ApplicationConstants;
+import java.util.concurrent.CountDownLatch;
 
 public class UserStreamConnector {
     private SpotWebSocketApi api;
@@ -27,8 +28,14 @@ public class UserStreamConnector {
         return api;
     }
 
-    public StreamBlockingQueueWrapper<UserDataStreamEventsResponse> connect() throws ApiException {
+    public StreamBlockingQueueWrapper<UserDataStreamEventsResponse> connect(CountDownLatch readyLatch) throws ApiException {
         StreamResponse<UserDataStreamSubscribeResponse, UserDataStreamEventsResponse> response = getApi().userDataStreamSubscribe();
+        response.getResponse()
+                .thenAccept(result -> {
+                    if (result != null) {
+                        readyLatch.countDown();
+                    }
+                });
         return response.getStream();
     }
 }

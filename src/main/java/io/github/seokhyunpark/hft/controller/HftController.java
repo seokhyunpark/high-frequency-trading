@@ -17,16 +17,18 @@ public class HftController {
     private final UserStreamManager userManager;
     private final MarketStreamConnector marketStreamConnector;
     private final UserStreamConnector userStreamConnector;
+    private final CountDownLatch userStreamReadyLatch;
 
     public HftController() {
         try {
+            this.userStreamReadyLatch = new CountDownLatch(1);
+
             BinanceConnector binanceConnector = new BinanceConnector();
+            this.marketManager = new MarketStreamManager(binanceConnector, userStreamReadyLatch);
+            this.userManager = new UserStreamManager(binanceConnector);
 
             this.marketStreamConnector = new MarketStreamConnector();
             this.userStreamConnector = new UserStreamConnector();
-
-            this.marketManager = new MarketStreamManager(binanceConnector);
-            this.userManager = new UserStreamManager(binanceConnector);
         } catch (ApiException e) {
             throw new RuntimeException("HFT 컨트롤러 생성 실패: ", e);
         }
@@ -35,7 +37,7 @@ public class HftController {
     public void start() {
         try {
             StreamBlockingQueueWrapper<PartialBookDepthResponse> marketQueue = marketStreamConnector.connect();
-            StreamBlockingQueueWrapper<UserDataStreamEventsResponse> userQueue = userStreamConnector.connect();
+            StreamBlockingQueueWrapper<UserDataStreamEventsResponse> userQueue = userStreamConnector.connect(userStreamReadyLatch);
 
             Thread marketThread = new Thread(() -> {
                 marketManager.startProcessing(marketQueue);
